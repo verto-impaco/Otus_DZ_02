@@ -1,14 +1,8 @@
 from model import PhoneBook, FileRead, PATH
 from view import MenuView, ContactView
-from typing import Optional
-
 
 class CustomExceptions:
     """Класс с кастомными исключениями."""
-
-    class FileOperationError(Exception):
-        """Исключение при ошибках файловых операций."""
-        pass
 
     class ContactNotFoundError(Exception):
         """Исключение при ненайденном контакте."""
@@ -102,8 +96,8 @@ class PhoneBookController:
         # Проверяем существование контакта
         existing_contact = self.phone_book.find_contact(contact_name)
         if not existing_contact:
-            print(f"Контакт '{contact_name}' не найден")
-            return
+            raise CustomExceptions.ContactNotFoundError(
+                print(f"Контакт '{contact_name}' не найден"))
 
         # Показываем текущие данные
         self.contact_view.show_contact_detail(existing_contact)
@@ -111,8 +105,8 @@ class PhoneBookController:
         new_name, new_number, new_note = self.contact_view.get_updated_contact_data()
 
         if not new_name and not new_number and not new_note:
-            print(
-                "Не введены новые данные для изменения")
+            CustomExceptions.InvalidInputError(print(
+                "Не введены новые данные для изменения"))
 
         old_parts = existing_contact.split('=')
         if len(old_parts) > 1:
@@ -139,8 +133,8 @@ class PhoneBookController:
 
         existing_contact = self.phone_book.find_contact(contact_name)
         if not existing_contact:
-            print(f"Контакт '{contact_name}' не найден")
-            return
+            raise CustomExceptions.ContactNotFoundError(
+                print(f"Контакт '{contact_name}' не найден"))
 
         self.phone_book.delete_contact(contact_name)
 
